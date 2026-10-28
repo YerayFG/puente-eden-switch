@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puente Eden ⇄ Switch</title>
+<link rel="icon" href="/icon.svg">
+<style>
+:root{
+  --bg:#0d1017; --panel:#151a24; --panel2:#1b2130; --line:#262e40;
+  --text:#e8ecf4; --muted:#8c96ab; --faint:#5d667a;
+  --switch:#ff4d5e; --eden:#8b5cf6; --ok:#2fd27d; --warn:#ffb547; --err:#ff5d5d;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+html{background:var(--bg)}
+body{background:radial-gradient(1200px 500px at 15% -10%,#1a1530 0%,transparent 60%),radial-gradient(900px 400px at 110% 0%,#2a1218 0%,transparent 55%),var(--bg);
+  background-attachment:fixed;color:var(--text);font:14px/1.45 "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.app{max-width:1100px;margin:0 auto;padding:22px 26px 28px;display:flex;flex-direction:column;gap:18px;min-height:100%}
+header{display:flex;align-items:center;gap:14px}
+header img{width:40px;height:40px}
+header h1{font:600 20px/1.1 "Segoe UI Variable Display","Segoe UI",system-ui;margin:0;letter-spacing:.2px}
+header .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+.pill{margin-left:auto;display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-weight:600;font-size:13px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--faint)}
+.pill.ok .dot{background:var(--ok);box-shadow:0 0 0 4px #2fd27d22}
+.pill.play .dot{background:var(--ok);animation:pulse 1.4s infinite}
+.pill.wait .dot{background:var(--warn)}
+.pill.err .dot{background:var(--err)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #2fd27d88}70%{box-shadow:0 0 0 9px #2fd27d00}100%{box-shadow:0 0 0 0 #2fd27d00}}
+.banner{display:none;padding:11px 14px;border-radius:12px;background:#3a2410;border:1px solid #6b4316;color:#ffd9a6}
+.banner.show{display:block}
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.card h2{font-size:12px;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin:0 0 14px;font-weight:600}
+.steps{display:flex;flex-direction:column;gap:4px}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:12px 10px;border-radius:12px;position:relative}
+.step:not(:last-child)::after{content:"";position:absolute;left:26px;top:46px;bottom:-6px;width:2px;background:var(--line)}
+.step.done:not(:last-child)::after{background:linear-gradient(var(--ok),var(--line))}
+.num{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--panel2);border:1.5px solid var(--line);color:var(--muted);z-index:1}
+.step.active{background:var(--panel2)}
+.step.active .num{border-color:var(--eden);color:var(--text)}
+.step.done .num{background:var(--ok);border-color:var(--ok);color:#06210f}
+.step.err .num{background:var(--err);border-color:var(--err);color:#2a0606}
+.step h3{margin:5px 0 2px;font-size:15px;font-weight:600}
+.step .desc{color:var(--muted)}
+.step.done .desc{color:#b9f0cf}
+.how{margin-top:10px;display:none;background:#0f131c;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.step.active .how{display:block}
+.how ol{margin:0;padding-left:18px}
+.how li{margin:3px 0}
+kbd{font:600 12px/1 "Cascadia Mono",Consolas,monospace;background:#232a3a;border:1px solid #333d54;border-bottom-width:2px;border-radius:6px;padding:3px 6px}
+.copyrow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.copy{display:flex;align-items:center;gap:10px;background:#1a2030;border:1px solid var(--line);border-radius:9px;padding:6px 8px 6px 12px}
+.copy span{color:var(--muted);font-size:12px}
+.copy b{font:600 14px "Cascadia Mono",Consolas,monospace}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:#232a3a;color:var(--text);padding:5px 10px}
+button:hover{background:#2b3346}
+button.primary{background:var(--eden);border-color:var(--eden);font-weight:600}
+button.primary:hover{background:#7c4ff0}
+button.ghost{background:transparent}
+.side{display:flex;flex-direction:column;gap:18px}
+.devices{display:grid;grid-template-columns:1fr;gap:10px}
+.dev{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line)}
+.badge{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex:none}
+.b-sw{background:linear-gradient(135deg,#ff6b78,#d92f45)}
+.b-ed{background:linear-gradient(135deg,#a78bfa,#6d28d9)}
+.b-pc{background:linear-gradient(135deg,#4b5878,#2b3346)}
+.dev .t{font-weight:600}
+.dev .s{color:var(--muted);font-size:12.5px}
+.dev .st{margin-left:auto;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:#232a3a;color:var(--muted);white-space:nowrap}
+.dev .st.on{background:#123524;color:#7ef0b0}
+.traffic{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.meter{padding:12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line)}
+.meter .l{color:var(--muted);font-size:12px}
+.meter .v{font:700 24px/1.2 "Segoe UI Variable Display","Segoe UI",system-ui;margin-top:4px;font-variant-numeric:tabular-nums}
+.meter .bar{height:4px;border-radius:4px;background:#232a3a;margin-top:8px;overflow:hidden}
+.meter .bar i{display:block;height:100%;width:0;border-radius:4px;transition:width .4s}
+.m-se .bar i{background:linear-gradient(90deg,var(--switch),var(--eden))}
+.m-es .bar i{background:linear-gradient(90deg,var(--eden),var(--switch))}
+.session{margin-top:12px;padding:12px;border-radius:12px;border:1px dashed var(--line);color:var(--muted);text-align:center}
+.session.playing{border-style:solid;border-color:#1f6b45;background:#0f2a1d;color:#b9f0cf;font-weight:600}
+.session.searching{border-color:#4b3a7a;color:#d5c7ff}
+details.log{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+details.log summary{cursor:pointer;padding:13px 18px;color:var(--muted);font-weight:600;list-style:none;display:flex;align-items:center;gap:8px}
+details.log summary::before{content:"▸";transition:transform .15s}
+details.log[open] summary::before{transform:rotate(90deg)}
+#log{max-height:240px;overflow:auto;padding:0 18px 14px;font:12.5px/1.55 "Cascadia Mono",Consolas,monospace}
+#log div{white-space:pre-wrap;color:#c4cbda}
+#log .t{color:var(--faint);margin-right:8px}
+#log .warn{color:#ffd08a}
+#log .ok{color:#8ff0bd}
+footer{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12.5px;flex-wrap:wrap}
+footer .sp{flex:1}
+.fw{display:flex;align-items:center;gap:8px}
+.fw.ok::before{content:"●";color:var(--ok)}
+.fw.missing::before{content:"●";color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <img src="/icon.svg" alt="">
+    <div>
+      <h1>Puente Eden ⇄ Switch</h1>
+      <div class="sub">Juego local entre tu Switch con ldn_mitm y el emulador Eden · <span id="ver"></span></div>
+    </div>
+    <div class="pill wait" id="pill"><span class="dot"></span><span id="pilltxt">Conectando…</span></div>
+  </header>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Pasos</h2>
+      <div class="steps">
+        <div class="step" id="s1">
+          <div class="num">1</div>
+          <div>
+            <h3>Sala del puente</h3>
+            <div class="desc" id="s1d">Creando la sala…</div>
+          </div>
+        </div>
+        <div class="step" id="s2">
+          <div class="num">2</div>
+          <div>
+            <h3>Conecta Eden a la sala</h3>
+            <div class="desc" id="s2d">Esperando a Eden</div>
+            <div class="how">
+              <ol>
+                <li>En Eden abre <b>Multijugador</b> › <b>Conexión directa</b> <span style="color:var(--faint)">(Direct Connect)</span>.</li>
+                <li>Escribe estos datos y pulsa <b>Conectar</b>:</li>
+              </ol>
+              <div class="copyrow">
+                <div class="copy"><span>IP</span><b>127.0.0.1</b><button data-copy="127.0.0.1">Copiar</button></div>
+                <div class="copy"><span>Puerto</span><b id="port">24872</b><button id="copyport">Copiar</button></div>
+              </div>
+              <div style="margin-top:8px;color:var(--faint);font-size:12.5px">Si Eden tiene una sala propia creada, ciérrala antes: la sala la pone este programa.</div>
+            </div>
+          </div>
+        </div>
+        <div class="step" id="s3">
+          <div class="num">3</div>
+          <div>
+            <h3>Prepara la Switch</h3>
+            <div class="desc" id="s3d">Esperando a la Switch</div>
+            <div class="how">
+              <ol>
+                <li>Conecta la Switch al <b>mismo WiFi/router</b> que este PC.</li>
+                <li>Abre el menú de overlays con <kbd>L</kbd> + <kbd>↓</kbd> + <kbd>R3</kbd> y pon <b>ldn_mitm</b> en <b>ON</b>.</li>
+                <li>Abre el juego y entra en su modo <b>local / inalámbrico</b>. La Switch aparecerá aquí sola.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="step" id="s4">
+          <div class="num">4</div>
+          <div>
+            <h3>¡A jugar!</h3>
+            <div class="desc" id="s4d">Un jugador crea la partida en modo local y el otro la busca y se une.</div>
+            <div class="how">
+              <ol>
+                <li>Usad el <b>mismo juego y la misma versión</b> en los dos.</li>
+                <li>Crea la partida en modo local en la Switch <i>o</i> en Eden.</li>
+                <li>Desde el otro, busca partidas locales y únete.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="side">
+      <section class="card">
+        <h2>Dispositivos</h2>
+        <div class="devices">
+          <div class="dev"><div class="badge b-pc">PC</div><div><div class="t">Este PC</div><div class="s" id="pcip">—</div></div><div class="st on" id="pcst">Puente activo</div></div>
+          <div class="dev"><div class="badge b-ed">ED</div><div><div class="t" id="edt">Eden</div><div class="s" id="eds">No conectado</div></div><div class="st" id="edst">Esperando</div></div>
+          <div class="dev"><div class="badge b-sw">SW</div><div><div class="t">Switch</div><div class="s" id="sws">No detectada</div></div><div class="st" id="swst">Esperando</div></div>
+        </div>
+        <div class="session" id="session">Sin partida todavía</div>
+      </section>
+      <section class="card">
+        <h2>Datos del juego</h2>
+        <div class="traffic">
+          <div class="meter m-se"><div class="l">Switch → Eden</div><div class="v" id="se">0</div><div class="bar"><i id="seb"></i></div></div>
+          <div class="meter m-es"><div class="l">Eden → Switch</div><div class="v" id="es">0</div><div class="bar"><i id="esb"></i></div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <details class="log" id="logbox">
+    <summary>Registro</summary>
+    <div id="log"></div>
+  </details>
+
+  <footer>
+    <span class="fw" id="fw"></span>
+    <button class="ghost" id="fwbtn" style="display:none">Permitir en el Firewall</button>
+    <span class="sp"></span>
+    <span>Deja esta ventana abierta mientras jugáis</span>
+    <button id="quit">Cerrar puente</button>
+  </footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+let after = 0, lastSE = 0, lastES = 0, rateSE = 0, rateES = 0, failures = 0;
+
+document.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => copy(b, b.dataset.copy));
+$("copyport").onclick = e => copy(e.target, $("port").textContent);
+function copy(btn, text){
+  navigator.clipboard.writeText(text).then(() => { const o = btn.textContent; btn.textContent = "¡Copiado!"; setTimeout(() => btn.textContent = o, 1200); });
+}
+$("quit").onclick = () => { if (confirm("¿Cerrar el puente? La Switch y Eden dejarán de verse.")) fetch("/api/quit", {method:"POST"}).finally(() => { document.body.innerHTML = '<p style="padding:40px;color:#8c96ab;font:15px Segoe UI">Puente cerrado. Ya puedes cerrar esta ventana.</p>'; window.close(); }); };
+$("fwbtn").onclick = () => fetch("/api/firewall", {method:"POST"});
+
+function setStep(id, state, text){
+  const el = $(id); el.className = "step " + state;
+  if (text !== undefined) $(id + "d").textContent = text;
+}
+function fmt(n){ return n.toLocaleString("es-ES"); }
+
+function render(s){
+  $("ver").textContent = "v" + s.version;
+  $("port").textContent = s.roomPort || 24872;
+  $("pcip").textContent = s.pcIP ? "IP " + s.pcIP : "Buscando la red…";
+
+  // Step 1: room
+  const roomOK = s.roomReady && !s.roomError;
+  if (s.roomError) setStep("s1", "err", s.roomError);
+  else if (roomOK) setStep("s1", "done", s.roomMode === "client" ? "Conectado a la sala de Eden" : "Sala abierta en el puerto " + s.roomPort);
+  else setStep("s1", "active", "Creando la sala…");
+
+  // Step 2: Eden
+  const edenOK = !!s.edenNick || s.roomMode === "client";
+  if (s.roomMode === "client") setStep("s2", "done", "Usando una sala de Eden");
+  else if (edenOK) setStep("s2", "done", s.edenNick + " conectado" + (s.edenGame ? " · " + s.edenGame : ""));
+  else setStep("s2", roomOK ? "active" : "", "Esperando a Eden");
+
+  // Step 3: Switch
+  const swOK = !!s.switchIP;
+  if (swOK) setStep("s3", "done", "Switch detectada en " + s.switchIP);
+  else setStep("s3", edenOK && roomOK ? "active" : "", "Esperando a la Switch (ldn_mitm en ON y modo local del juego)");
+
+  // Step 4: game
+  const playing = s.sessionKind === "playing";
+  if (playing) setStep("s4", "done", s.session);
+  else if (s.sessionKind === "searching") setStep("s4", "active", s.session);
+  else setStep("s4", swOK && edenOK ? "active" : "", s.session || "Un jugador crea la partida en modo local y el otro la busca y se une.");
+
+  // Devices
+  $("edt").textContent = s.edenNick ? "Eden · " + s.edenNick : "Eden";
+  $("eds").textContent = s.edenNick ? (s.edenGame || "Sin juego abierto") + " · " + s.edenIP : "No conectado";
+  $("edst").textContent = s.edenNick ? "Conectado" : "Esperando"; $("edst").className = "st" + (s.edenNick ? " on" : "");
+  const recent = s.switchSeen && (Date.now() - s.switchSeen < 120000);
+  $("sws").textContent = s.switchIP ? "IP " + s.switchIP : "No detectada";
+  $("swst").textContent = s.switchIP ? (recent ? "Activa" : "Detectada") : "Esperando"; $("swst").className = "st" + (s.switchIP ? " on" : "");
+
+  const ses = $("session");
+  ses.className = "session " + (s.sessionKind || "");
+  ses.textContent = playing ? "🎮 " + s.session : (s.session || "Sin partida todavía");
+
+  // Traffic
+  rateSE = Math.max(0, s.toEden - lastSE); rateES = Math.max(0, s.toSwitch - lastES);
+  lastSE = s.toEden; lastES = s.toSwitch;
+  $("se").textContent = fmt(s.toEden); $("es").textContent = fmt(s.toSwitch);
+  $("seb").style.width = Math.min(100, rateSE * 2) + "%"; $("esb").style.width = Math.min(100, rateES * 2) + "%";
+
+  // Header pill
+  const pill = $("pill");
+  if (s.roomError) { pill.className = "pill err"; $("pilltxt").textContent = "Hay un problema"; }
+  else if (playing) { pill.className = "pill play"; $("pilltxt").textContent = "Jugando"; }
+  else if (roomOK && edenOK && swOK) { pill.className = "pill ok"; $("pilltxt").textContent = "Listo para jugar"; }
+  else { pill.className = "pill wait"; $("pilltxt").textContent = "Preparando"; }
+
+  // Banner & firewall
+  const b = $("banner"); b.textContent = s.warning || ""; b.className = "banner" + (s.warning ? " show" : "");
+  const fw = $("fw");
+  if (s.firewall === "ok") { fw.className = "fw ok"; fw.textContent = "Firewall de Windows: permitido"; $("fwbtn").style.display = "none"; }
+  else if (s.firewall === "missing") { fw.className = "fw missing"; fw.textContent = "Firewall de Windows: sin permiso para el puente"; $("fwbtn").style.display = ""; }
+  else { fw.className = "fw"; fw.textContent = ""; $("fwbtn").style.display = "none"; }
+
+  // Log
+  if (s.logs && s.logs.length) {
+    const box = $("log"), atBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 8;
+    for (const l of s.logs) {
+      const d = document.createElement("div"); d.className = l.k;
+      const t = document.createElement("span"); t.className = "t"; t.textContent = l.t;
+      d.append(t, document.createTextNode(l.m)); box.append(d);
+      after = Math.max(after, l.id);
+    }
+    while (box.childElementCount > 500) box.firstChild.remove();
+    if (atBottom) box.scrollTop = box.scrollHeight;
+  }
+}
+
+async function poll(){
+  try {
+    const r = await fetch("/api/state?after=" + after, {cache:"no-store"});
+    render(await r.json()); failures = 0;
+  } catch (e) {
+    if (++failures > 3) { $("pill").className = "pill err"; $("pilltxt").textContent = "Puente cerrado"; }
+  }
+  setTimeout(poll, 1000);
+}
+poll();
+</script>
+</body>
+</html>

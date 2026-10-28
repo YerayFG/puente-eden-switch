@@ -1,0 +1,10 @@
+# Compilados
+*.exe
+dist/
+# Windows
+Thumbs.db
+desktop.ini
+# Editores
+.vscode/
+.idea/
+rsrc_windows_amd64.syso
