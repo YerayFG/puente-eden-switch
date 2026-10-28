@@ -146,7 +146,7 @@ go run ./tools/mkrsrc -o rsrc_windows_amd64.syso assets/icon-256.png assets/icon
 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -H windowsgui" -o PuenteEdenSwitch.exe .
 ```
 
-On Windows you can also run `build.bat`. Every `v*` tag is built by GitHub Actions and the `.exe` is attached to *Releases*.
+On Windows you can also run `build.bat`. Every published release is built by GitHub Actions and the `.exe` is attached to it automatically.
 
 ## Limitations
 

@@ -144,7 +144,7 @@ go run ./tools/mkrsrc -o rsrc_windows_amd64.syso assets/icon-256.png assets/icon
 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -H windowsgui" -o PuenteEdenSwitch.exe .
 ```
 
-En Windows también puedes usar `build.bat`. Cada vez que se publica una etiqueta `v*`, GitHub Actions compila y publica el `.exe` en *Releases*.
+En Windows también puedes usar `build.bat`. Cada vez que se publica una versión en *Releases*, GitHub Actions compila el `.exe` y lo adjunta automáticamente.
 
 ## Limitaciones
 

@@ -1,6 +1,8 @@
 name: Compilar y publicar
 
 on:
+  release:
+    types: [published]
   push:
     tags: ["v*"]
   workflow_dispatch:
@@ -33,7 +35,7 @@ jobs:
           path: PuenteEdenSwitch.exe
 
       - name: Publicar en Releases
-        if: startsWith(github.ref, 'refs/tags/')
+        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: PuenteEdenSwitch.exe
