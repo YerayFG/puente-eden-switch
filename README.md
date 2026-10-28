@@ -150,7 +150,7 @@ On Windows you can also run `build.bat`. Every published release is built by Git
 
 ## Limitations
 
-- **2 players** for now: one Switch and one Eden.
+- **2 consoles** for now: one Switch and one Eden. Each side can still have **several players with their own controllers** (as many as the game allows per console), e.g. friends sharing the PC with Eden.
 - Games that use **TCP** for the match won't work, because Eden rooms don't support it.
 - **Experimental**: not every game has been tested. Reports are welcome in *Issues*.
 

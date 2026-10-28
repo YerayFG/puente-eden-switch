@@ -148,7 +148,7 @@ En Windows también puedes usar `build.bat`. Cada vez que se publica una versió
 
 ## Limitaciones
 
-- De momento, **2 jugadores**: una Switch y un Eden.
+- De momento, **2 consolas**: una Switch y un Eden. Pero en cada lado pueden jugar **varias personas con sus propios mandos** (las que permita el juego por consola), por ejemplo varios amigos en el PC con Eden.
 - Los juegos que usan **TCP** para la partida no funcionan, porque las salas de Eden no lo permiten.
 - Es un proyecto **experimental**: no todos los juegos están probados.
 
