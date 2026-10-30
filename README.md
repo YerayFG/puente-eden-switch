@@ -44,7 +44,7 @@ This program is a **translator** between them:
 Tested with:
 
 - **Super Smash Bros. Ultimate** (13.0.1)
-- **Mario Kart 8 Deluxe**
+- **Mario Kart 8 Deluxe** (3.0.3)
 
 ## Features
 

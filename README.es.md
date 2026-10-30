@@ -42,7 +42,7 @@ Este programa hace de **traductor** entre ellos:
 Probado con:
 
 - **Super Smash Bros. Ultimate** (13.0.1)
-- **Mario Kart 8 Deluxe**
+- **Mario Kart 8 Deluxe** (3.0.3)
 
 ## Características
 
