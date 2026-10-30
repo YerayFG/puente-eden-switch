@@ -41,7 +41,10 @@ This program is a **translator** between them:
 - To the **Switch**, the PC is another console running ldn_mitm.
 - Works **both ways**: either the Switch or Eden can host the match.
 
-Tested with **Super Smash Bros. Ultimate 13.0.1**.
+Tested with:
+
+- **Super Smash Bros. Ultimate** (13.0.1)
+- **Mario Kart 8 Deluxe**
 
 ## Features
 
@@ -163,7 +166,7 @@ On Windows you can also run `build.bat`. Every published release is built by Git
 
 ## Disclaimer
 
-Unofficial project, not affiliated with Nintendo or with the Eden or ldn_mitm developers. *Nintendo Switch* and *Super Smash Bros.* are trademarks of Nintendo. This program does not include or provide games, firmware or keys: only use it with games you own legally.
+Unofficial project, not affiliated with Nintendo or with the Eden or ldn_mitm developers. *Nintendo Switch* and *Super Smash Bros.* and *Mario Kart* are trademarks of Nintendo. This program does not include or provide games, firmware or keys: only use it with games you own legally.
 
 ## License
 
